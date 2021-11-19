@@ -236,6 +236,7 @@ class NASBench(object):
 
     fixed_stat, computed_stat = self.get_metrics_from_spec(model_spec)
     sampled_index = random.randint(0, self.config['num_repeats'] - 1)
+    computed_stat_orig = copy.deepcopy(computed_stat)
     computed_stat = computed_stat[epochs][sampled_index]
 
     data = {}
@@ -251,7 +252,7 @@ class NASBench(object):
     else:
       data['training_time'] = computed_stat['final_training_time']
       data['train_accuracy'] = computed_stat['final_train_accuracy']
-      data['validation_accuracy'] = computed_stat['final_validation_accuracy']
+      data['validation_accuracy'] = np.mean([computed_stat_orig[epochs][i]['final_validation_accuracy'] for i in range(self.config['num_repeats'])])
       data['test_accuracy'] = computed_stat['final_test_accuracy']
 
     self.training_time_spent += data['training_time']
